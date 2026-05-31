@@ -7,186 +7,526 @@
   <link rel="stylesheet" href="{{ asset('vendor/fa/css/all.min.css') }}">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --primary:   #5D3A1A;
-      --primary-d: #4A2D13;
-      --accent:    #C4956A;
-      --body-bg:   #F7F2EC;
-      --card-bg:   #FFFFFF;
-      --border:    #E8DDD4;
-      --text:      #1A0F07;
-      --muted:     #7A6555;
-      --radius:    4px;
+      --dk:   #0D0905;
+      --sb:   #1C120A;
+      --br:   #5D3A1A;
+      --br-d: #4A2D13;
+      --br-l: #7A4E2D;
+      --ac:   #C4956A;
+      --gold: #D4AA70;
+      --cr:   #F7F3EE;
+      --wh:   #FFFFFF;
+      --bd:   #E5D9CF;
+      --tx:   #1A0F07;
+      --mt:   #7A6555;
     }
-    html, body {
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: var(--body-bg);
+
+    html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+
+    /* ═══════════════════════════════════════════
+       SHELL — full-viewport split
+    ═══════════════════════════════════════════ */
+    .lp {
+      min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
     }
-    body {
-      background-image:
-        radial-gradient(ellipse at 20% 50%, rgba(93,58,26,0.06) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(196,149,106,0.08) 0%, transparent 50%);
-    }
-    .login-wrap {
-      width: 100%;
-      max-width: 420px;
-      padding: 16px;
-    }
-    .login-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      box-shadow: 0 8px 32px rgba(93,58,26,0.12);
+
+    /* ───────────────────────────────────────────
+       LEFT — brand panel
+    ─────────────────────────────────────────── */
+    .lp-left {
+      width: 52%;
+      min-height: 100vh;
+      background: var(--sb);
+      display: flex;
+      flex-direction: column;
+      padding: 52px 60px 44px;
+      position: relative;
       overflow: hidden;
     }
-    .login-header {
-      background: linear-gradient(135deg, #1C120A 0%, #3A2010 100%);
-      padding: 28px 24px 22px;
-      text-align: center;
+
+    /* Atmospheric glow layers */
+    .lp-left::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 15% 10%,  rgba(196,149,106,.14) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 60% at 85% 85%,  rgba(93,58,26,.6)     0%, transparent 100%),
+        radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(28,18,10,.4)     0%, transparent 100%);
+      pointer-events: none;
     }
-    @media (max-width: 480px) {
-      body { align-items: flex-start; padding-top: 24px; }
-      .login-wrap { padding: 12px; }
-      .login-body { padding: 20px 18px 24px; }
-      .login-header { padding: 24px 18px 18px; }
-      .login-header h1 { font-size: 1.125rem; }
+
+    /* Large decorative scales watermark */
+    .lp-watermark {
+      position: absolute;
+      right: -80px;
+      bottom: -80px;
+      width: 460px;
+      height: 460px;
+      opacity: .035;
+      pointer-events: none;
     }
-    .login-logo {
+
+    /* Decorative top corner lines */
+    .lp-corner {
+      position: absolute;
+      top: 0; right: 0;
+      width: 180px; height: 180px;
+      opacity: .06;
+      pointer-events: none;
+    }
+
+    .lp-top, .lp-mid, .lp-bot {
+      position: relative;
+      z-index: 2;
+    }
+    .lp-mid { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+    /* ── Logo ───────────────────────────────── */
+    .lp-logo {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      width: 54px; height: 54px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 10px;
-      font-family: 'Georgia', serif;
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: #fff;
-      margin-bottom: 16px;
+      gap: 15px;
     }
-    .login-header h1 {
-      font-size: 1.375rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.04em;
+    .lp-logo-badge {
+      width: 52px; height: 52px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,.4));
     }
-    .login-header p {
-      font-size: 0.8125rem;
-      color: rgba(255,243,230,0.55);
-      margin-top: 5px;
-    }
-    .login-body { padding: 28px 32px 32px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label {
+    .lp-logo-words { line-height: 1; }
+    .lp-logo-name {
       display: block;
-      font-size: 0.75rem;
+      font-size: 1.4375rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .lp-logo-tag {
+      display: block;
+      font-size: .625rem;
       font-weight: 600;
-      color: var(--text);
-      margin-bottom: 5px;
-    }
-    .input-wrap { position: relative; }
-    .input-wrap i {
-      position: absolute;
-      left: 12px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 0.8125rem;
-    }
-    .input-wrap input {
-      width: 100%;
-      padding: 10px 12px 10px 36px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-family: inherit;
-      font-size: 0.875rem;
-      color: var(--text);
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .input-wrap input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(93,58,26,0.08);
-    }
-    .check-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 22px;
+      color: var(--ac);
+      letter-spacing: .22em;
+      text-transform: uppercase;
       margin-top: 4px;
     }
-    .check-row input { accent-color: var(--primary); }
-    .check-row label { font-size: 0.8125rem; color: var(--muted); cursor: pointer; }
-    .btn-login {
-      width: 100%;
-      padding: 11px;
-      background: var(--primary);
+
+    /* ── Mid content ──────────────────────── */
+    .lp-rule {
+      width: 52px; height: 2px;
+      background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+      margin-bottom: 32px;
+    }
+
+    .lp-heading {
+      font-size: clamp(2.25rem, 3.5vw, 3.25rem);
+      font-weight: 900;
       color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      font-family: inherit;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
+      line-height: 1.1;
+      letter-spacing: -.025em;
+      margin-bottom: 20px;
+    }
+    .lp-heading em {
+      font-style: normal;
+      color: var(--ac);
+    }
+
+    .lp-desc {
+      font-size: .9375rem;
+      color: rgba(247,243,238,.48);
+      line-height: 1.7;
+      max-width: 330px;
+      margin-bottom: 44px;
+    }
+
+    /* Feature rows */
+    .lp-feats { display: flex; flex-direction: column; gap: 16px; }
+    .lp-feat {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .lp-feat-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: rgba(196,149,106,.12);
+      border: 1px solid rgba(196,149,106,.22);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      flex-shrink: 0;
+      color: var(--ac);
+      font-size: .8125rem;
     }
-    .btn-login:hover { background: var(--primary-d); }
-    .alert {
+    .lp-feat-text {
+      font-size: .8125rem;
+      color: rgba(247,243,238,.6);
+      font-weight: 500;
+    }
+
+    /* ── Bottom ───────────────────────────── */
+    .lp-fine {
+      font-size: .625rem;
+      color: rgba(247,243,238,.22);
+      line-height: 1.7;
+    }
+    .lp-fine strong { color: rgba(247,243,238,.38); font-weight: 600; }
+
+    /* ═══════════════════════════════════════════
+       RIGHT — form panel
+    ═══════════════════════════════════════════ */
+    .lp-right {
+      flex: 1;
+      background: var(--cr);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 52px;
+    }
+
+    .lp-form-wrap { width: 100%; max-width: 400px; }
+
+    /* ── Form header ──────────────────────── */
+    .lp-form-eyebrow {
+      font-size: .625rem;
+      font-weight: 800;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--ac);
+      margin-bottom: 10px;
+    }
+    .lp-form-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--tx);
+      letter-spacing: -.02em;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .lp-form-sub {
+      font-size: .875rem;
+      color: var(--mt);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* ── Alerts ───────────────────────────── */
+    .lp-alert {
       display: flex;
       align-items: flex-start;
-      gap: 9px;
-      padding: 10px 14px;
-      border-radius: var(--radius);
-      font-size: 0.8125rem;
+      gap: 10px;
+      padding: 12px 15px;
+      border-radius: 7px;
+      font-size: .8125rem;
+      line-height: 1.55;
+      margin-bottom: 22px;
       border-left: 3px solid;
-      margin-bottom: 16px;
     }
-    .alert-error   { background: rgba(220,38,38,0.08); border-color: #DC2626; color: #7F1D1D; }
-    .alert-info    { background: rgba(29,78,216,0.08); border-color: #1D4ED8; color: #1E3A8A; }
-    .login-footer {
-      text-align: center;
-      padding-top: 18px;
-      font-size: 0.6875rem;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      margin-top: 20px;
+    .lp-alert i { margin-top: 1px; flex-shrink: 0; }
+    .lp-alert-err { background: rgba(220,38,38,.07);  border-color: #DC2626; color: #7F1D1D; }
+    .lp-alert-inf { background: rgba(29,78,216,.07);  border-color: #1D4ED8; color: #1E3A8A; }
+
+    /* ── Fields ───────────────────────────── */
+    .lp-field { margin-bottom: 20px; }
+    .lp-label {
+      display: block;
+      font-size: .6875rem;
+      font-weight: 800;
+      color: var(--tx);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .lp-inr { position: relative; }
+    .lp-ico {
+      position: absolute;
+      left: 15px; top: 50%;
+      transform: translateY(-50%);
+      color: #B5A598;
+      font-size: .8125rem;
+      pointer-events: none;
+      transition: color .15s;
+    }
+    .lp-inp {
+      width: 100%;
+      height: 50px;
+      padding: 0 15px 0 44px;
+      border: 1.5px solid var(--bd);
+      border-radius: 8px;
+      background: var(--wh);
+      font-family: inherit;
+      font-size: .9375rem;
+      color: var(--tx);
+      transition: border-color .15s, box-shadow .15s;
+      -webkit-appearance: none;
+    }
+    .lp-inp:focus {
+      outline: none;
+      border-color: var(--br);
+      box-shadow: 0 0 0 3.5px rgba(93,58,26,.1);
+    }
+    .lp-inp:focus + .lp-ico,
+    .lp-inr:focus-within .lp-ico { color: var(--br); }
+    .lp-inp::placeholder { color: #C8BCB3; font-size: .875rem; }
+
+    /* Password toggle */
+    .lp-eye {
+      position: absolute;
+      right: 15px; top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #B5A598;
+      font-size: .875rem;
+      padding: 0;
+      line-height: 1;
+      transition: color .15s;
+    }
+    .lp-eye:hover { color: var(--br); }
+
+    /* ── Bottom row ───────────────────────── */
+    .lp-check-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 28px;
+    }
+    .lp-check-row input[type="checkbox"] {
+      width: 17px; height: 17px;
+      accent-color: var(--br);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .lp-check-row label {
+      font-size: .8125rem;
+      color: var(--mt);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* ── Submit ───────────────────────────── */
+    .lp-submit {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      height: 52px;
+      background: var(--br);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      cursor: pointer;
+      transition: background .15s, transform .1s, box-shadow .15s;
+      box-shadow: 0 4px 20px rgba(93,58,26,.3);
+      overflow: hidden;
+    }
+    .lp-submit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.09) 0%, transparent 60%);
+    }
+    .lp-submit:hover  { background: var(--br-d); box-shadow: 0 6px 28px rgba(93,58,26,.38); }
+    .lp-submit:active { transform: translateY(1px); box-shadow: 0 2px 12px rgba(93,58,26,.25); }
+
+    /* ── Security notice ──────────────────── */
+    .lp-secure {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 22px;
+      font-size: .6875rem;
+      color: #BCAFA5;
+    }
+    .lp-secure-dot { color: var(--bd); }
+    .lp-secure i { color: #8BB98B; font-size: .625rem; }
+
+    /* ── Footer ───────────────────────────── */
+    .lp-form-foot {
+      margin-top: 44px;
+      padding-top: 22px;
+      border-top: 1px solid var(--bd);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .lp-foot-copy {
+      font-size: .6875rem;
+      color: #C5B9B0;
+    }
+    .lp-foot-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .625rem;
+      font-weight: 700;
+      color: #C5B9B0;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .lp-foot-badge svg { opacity: .5; }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 960px) {
+      .lp { flex-direction: column; }
+      .lp-left {
+        width: 100%;
+        min-height: auto;
+        padding: 36px 32px 32px;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0;
+      }
+      .lp-mid, .lp-bot, .lp-watermark, .lp-corner { display: none; }
+      .lp-right { padding: 40px 32px 52px; }
+    }
+    @media (max-width: 560px) {
+      .lp-left  { padding: 28px 20px; }
+      .lp-right { padding: 32px 20px 48px; }
+      .lp-form-title { font-size: 1.625rem; }
     }
   </style>
 </head>
 <body>
 
-<div class="login-wrap">
-  <div class="login-card">
+<div class="lp">
 
-    <div class="login-header">
-      <div class="login-logo">OL</div>
-      <h1>ONYX Legal</h1>
-      <p>Secure staff portal — authorised access only</p>
+  <!-- ═══════════ LEFT BRAND ═══════════ -->
+  <div class="lp-left">
+
+    {{-- Atmospheric corner lines --}}
+    <svg class="lp-corner" viewBox="0 0 180 180" fill="none">
+      <line x1="180" y1="0"   x2="0"   y2="180" stroke="white" stroke-width="1"/>
+      <line x1="180" y1="30"  x2="30"  y2="180" stroke="white" stroke-width="1"/>
+      <line x1="180" y1="60"  x2="60"  y2="180" stroke="white" stroke-width="1"/>
+      <line x1="180" y1="90"  x2="90"  y2="180" stroke="white" stroke-width="1"/>
+      <line x1="180" y1="120" x2="120" y2="180" stroke="white" stroke-width="1"/>
+    </svg>
+
+    {{-- Large watermark scales --}}
+    <svg class="lp-watermark" viewBox="0 0 320 320" fill="none">
+      <line x1="160" y1="20"  x2="160" y2="300" stroke="white" stroke-width="5" stroke-linecap="round"/>
+      <line x1="30"  y1="78"  x2="290" y2="78"  stroke="white" stroke-width="5" stroke-linecap="round"/>
+      <line x1="30"  y1="78"  x2="30"  y2="148" stroke="white" stroke-width="3" stroke-linecap="round"/>
+      <path d="M0 148 Q30 185 60 148" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <line x1="290" y1="78"  x2="290" y2="138" stroke="white" stroke-width="3" stroke-linecap="round"/>
+      <path d="M260 138 Q290 175 320 138" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="160" cy="20" r="8"   fill="white"/>
+      <rect   x="130" y="295" width="60" height="10" rx="5" fill="white"/>
+    </svg>
+
+    <!-- TOP: Brand mark -->
+    <div class="lp-top">
+      <div class="lp-logo">
+        {{-- Scales-of-justice badge --}}
+        <svg class="lp-logo-badge" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="52" height="52" rx="12" fill="url(#lbg)"/>
+          <defs>
+            <linearGradient id="lbg" x1="0" y1="0" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+              <stop offset="0%"   stop-color="#7A4E2D"/>
+              <stop offset="100%" stop-color="#3A2010"/>
+            </linearGradient>
+          </defs>
+          {{-- Pole --}}
+          <line x1="26" y1="8"  x2="26" y2="44" stroke="#D4AA70" stroke-width="1.8" stroke-linecap="round"/>
+          {{-- Beam --}}
+          <line x1="10" y1="16" x2="42" y2="16" stroke="#D4AA70" stroke-width="1.8" stroke-linecap="round"/>
+          {{-- Left chain + pan --}}
+          <line x1="12" y1="16" x2="12" y2="27" stroke="#C4956A" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M6 27 Q12 34 18 27" stroke="#C4956A" stroke-width="1.5" fill="rgba(196,149,106,.15)" stroke-linecap="round"/>
+          {{-- Right chain + pan (lower — justice weighs) --}}
+          <line x1="40" y1="16" x2="40" y2="24" stroke="#C4956A" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M34 24 Q40 31 46 24" stroke="#C4956A" stroke-width="1.5" fill="rgba(196,149,106,.15)" stroke-linecap="round"/>
+          {{-- Top finial --}}
+          <circle cx="26" cy="8" r="2.2" fill="#D4AA70"/>
+          {{-- Base --}}
+          <rect x="20" y="42" width="12" height="2.5" rx="1.25" fill="#D4AA70"/>
+        </svg>
+
+        <div class="lp-logo-words">
+          <span class="lp-logo-name">ONYX</span>
+          <span class="lp-logo-tag">Legal &nbsp;·&nbsp; Advocates &amp; Solicitors</span>
+        </div>
+      </div>
     </div>
 
-    <div class="login-body">
+    <!-- MID: Headlines + features -->
+    <div class="lp-mid">
+      <div class="lp-rule"></div>
+
+      <h1 class="lp-heading">
+        Justice.<br>Clarity.<br><em>Results.</em>
+      </h1>
+
+      <p class="lp-desc">
+        Uganda's trusted legal practice management system — built for advocates who move fast and think clearly.
+      </p>
+
+      <div class="lp-feats">
+        <div class="lp-feat">
+          <div class="lp-feat-icon"><i class="fas fa-scale-balanced"></i></div>
+          <span class="lp-feat-text">Full legal case lifecycle management</span>
+        </div>
+        <div class="lp-feat">
+          <div class="lp-feat-icon"><i class="fas fa-folder-open"></i></div>
+          <span class="lp-feat-text">Secure client &amp; document vault</span>
+        </div>
+        <div class="lp-feat">
+          <div class="lp-feat-icon"><i class="fas fa-money-bill-transfer"></i></div>
+          <span class="lp-feat-text">Finance, accounts &amp; reporting</span>
+        </div>
+        <div class="lp-feat">
+          <div class="lp-feat-icon"><i class="fas fa-users"></i></div>
+          <span class="lp-feat-text">Multi-role team collaboration</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM: Legal fine print -->
+    <div class="lp-bot">
+      <p class="lp-fine">
+        <strong>ONYX Legal · Kampala, Uganda</strong><br>
+        Authorised staff access only. All activity is monitored and recorded.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ═══════════ RIGHT FORM ═══════════ -->
+  <div class="lp-right">
+    <div class="lp-form-wrap">
+
+      <div class="lp-form-eyebrow">Staff Portal</div>
+      <h2 class="lp-form-title">Sign in to your<br>account</h2>
+      <p class="lp-form-sub">Enter your staff email and password to access the system.</p>
 
       @if(session('status'))
-        <div class="alert alert-info">
+        <div class="lp-alert lp-alert-inf">
           <i class="fas fa-info-circle"></i>
-          {{ session('status') }}
+          <div>{{ session('status') }}</div>
         </div>
       @endif
 
       @if($errors->any())
-        <div class="alert alert-error">
+        <div class="lp-alert lp-alert-err">
           <i class="fas fa-circle-exclamation"></i>
           <div>
-            @foreach($errors->all() as $error)
-              <div>{{ $error }}</div>
-            @endforeach
+            @foreach($errors->all() as $e)<div>{{ $e }}</div>@endforeach
           </div>
         </div>
       @endif
@@ -194,45 +534,80 @@
       <form method="POST" action="{{ route('admin.login') }}">
         @csrf
 
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <div class="input-wrap">
-            <i class="fas fa-envelope"></i>
-            <input type="email" id="email" name="email"
+        <div class="lp-field">
+          <label class="lp-label" for="email">Email Address</label>
+          <div class="lp-inr">
+            <input class="lp-inp" type="email" id="email" name="email"
               value="{{ old('email') }}"
-              placeholder="your@email.com"
+              placeholder="you@onyxlegal.ug"
               required autofocus autocomplete="email">
+            <i class="fas fa-envelope lp-ico"></i>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <div class="input-wrap">
-            <i class="fas fa-lock"></i>
-            <input type="password" id="password" name="password"
-              placeholder="••••••••"
-              required autocomplete="current-password">
+        <div class="lp-field">
+          <label class="lp-label" for="password">Password</label>
+          <div class="lp-inr">
+            <input class="lp-inp" type="password" id="pw" name="password"
+              placeholder="••••••••••••"
+              required autocomplete="current-password"
+              style="padding-right:44px;">
+            <i class="fas fa-lock lp-ico"></i>
+            <button type="button" class="lp-eye" id="eyeBtn" title="Show / hide password" tabindex="-1">
+              <i class="fas fa-eye" id="eyeIco"></i>
+            </button>
           </div>
         </div>
 
-        <div class="check-row">
+        <div class="lp-check-row">
           <input type="checkbox" id="remember" name="remember">
           <label for="remember">Keep me signed in</label>
         </div>
 
-        <button type="submit" class="btn-login">
+        <button type="submit" class="lp-submit">
           <i class="fas fa-right-to-bracket"></i>
           Sign In
         </button>
       </form>
 
-      <div class="login-footer">
-        &copy; {{ date('Y') }} ONYX Legal &mdash; All rights reserved
+      <div class="lp-secure">
+        <i class="fas fa-shield-halved"></i>
+        <span>Encrypted connection</span>
+        <span class="lp-secure-dot">&bull;</span>
+        <span>Access logged</span>
+        <span class="lp-secure-dot">&bull;</span>
+        <span>Authorised staff only</span>
+      </div>
+
+      <div class="lp-form-foot">
+        <span class="lp-foot-copy">&copy; {{ date('Y') }} ONYX Legal &mdash; All rights reserved</span>
+        <span class="lp-foot-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          Uganda
+        </span>
       </div>
 
     </div>
   </div>
+
 </div>
+
+<script>
+(function(){
+  var btn = document.getElementById('eyeBtn');
+  var inp = document.getElementById('pw');
+  var ico = document.getElementById('eyeIco');
+  if (btn) btn.addEventListener('click', function(){
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      ico.className = 'fas fa-eye-slash';
+    } else {
+      inp.type = 'password';
+      ico.className = 'fas fa-eye';
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
