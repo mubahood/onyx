@@ -57,10 +57,9 @@
   <aside class="ad-sidebar" id="adSidebar">
 
     <a href="{{ route('admin.dashboard') }}" class="ad-sidebar-brand">
-      <div class="ad-logo-mark">OL</div>
-      <span class="ad-sidebar-brand-text">
-        ONYX <small>Legal</small>
-      </span>
+      <img src="{{ asset('images/logo-horizontal.png') }}"
+           alt="ONYX Advocates"
+           style="height:34px;width:auto;filter:brightness(0) invert(1);flex-shrink:0;">
       <button class="ad-sidebar-close" id="adSidebarClose" type="button"><i class="fas fa-times"></i></button>
     </a>
 

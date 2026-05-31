@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\CaseAssigned;
+use App\Mail\CaseClosed;
 use App\Models\Account;
 use App\Models\CaseNote;
 use App\Models\Client;
@@ -14,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
@@ -257,12 +260,29 @@ class ApiController extends Controller
             'closing_remarks' => $data['closing_remarks'] ?? null,
             'closed_date'     => now()->toDateString(),
         ]);
+
+        // Notify all case officers
+        $case->load('officers');
+        $notified = collect();
+        if ($case->main_officer_id) {
+            $notified->push($case->main_officer_id);
+            $this->mailClosed($case->main_officer_id, $case);
+        }
+        foreach ($case->officers as $officer) {
+            if (!$notified->contains($officer->id)) {
+                $this->mailClosed($officer->id, $case);
+            }
+        }
+
         return response()->json(['success' => true]);
     }
 
     public function reopenCase(LegalCase $case): JsonResponse
     {
         $case->update(['status' => 'ongoing', 'stage' => 'trial', 'score' => null, 'closed_date' => null]);
+        if ($case->main_officer_id) {
+            $this->mailAssignment($case->main_officer_id, $case, 'main');
+        }
         return response()->json(['success' => true]);
     }
 
@@ -285,6 +305,11 @@ class ApiController extends Controller
 
         $case = LegalCase::create($data);
         $case->load('client');
+
+        // Notify assigned officer
+        if (!empty($data['main_officer_id'])) {
+            $this->mailAssignment($data['main_officer_id'], $case, 'main');
+        }
 
         return response()->json([
             'success'      => true,
@@ -692,5 +717,29 @@ class ApiController extends Controller
         $user->update(['password' => Hash::make($request->password)]);
 
         return response()->json(['success' => true]);
+    }
+
+    // ── Mail helpers ───────────────────────────────────────────
+
+    private function mailAssignment(int $officerId, LegalCase $case, string $role): void
+    {
+        $officer = User::find($officerId);
+        if (!$officer?->email) return;
+        try {
+            Mail::to($officer->email)->send(new CaseAssigned($officer, $case, $role));
+        } catch (\Exception $e) {
+            \Log::error("CaseAssigned mail failed [{$case->case_number}] → {$officer->email}: " . $e->getMessage());
+        }
+    }
+
+    private function mailClosed(int $officerId, LegalCase $case): void
+    {
+        $officer = User::find($officerId);
+        if (!$officer?->email) return;
+        try {
+            Mail::to($officer->email)->send(new CaseClosed($officer, $case));
+        } catch (\Exception $e) {
+            \Log::error("CaseClosed mail failed [{$case->case_number}] → {$officer->email}: " . $e->getMessage());
+        }
     }
 }

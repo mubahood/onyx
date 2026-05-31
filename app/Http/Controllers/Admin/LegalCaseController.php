@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\CaseAssigned;
+use App\Mail\CaseClosed;
 use App\Models\LegalCase;
 use App\Models\CaseNote;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class LegalCaseController extends Controller
 {
@@ -110,11 +113,13 @@ class LegalCaseController extends Controller
             foreach ($data['team_officers'] as $officerId) {
                 if ($officerId != $data['main_officer_id']) {
                     $case->officers()->attach($officerId, ['role' => 'team']);
+                    $this->sendAssignmentEmail($officerId, $case, 'team');
                 }
             }
         }
         if ($data['main_officer_id']) {
             $case->officers()->syncWithoutDetaching([$data['main_officer_id'] => ['role' => 'main']]);
+            $this->sendAssignmentEmail($data['main_officer_id'], $case, 'main');
         }
 
         return redirect()->route('admin.cases.show', $case)
@@ -166,11 +171,17 @@ class LegalCaseController extends Controller
         $data['is_in_court']  = $request->boolean('is_in_court');
         $data['is_at_police'] = $request->boolean('is_at_police');
 
+        $prevMainOfficerId = $case->main_officer_id;
+        $prevTeamIds       = $case->officers()->wherePivot('role', 'team')->pluck('users.id')->toArray();
+
         $case->update($data);
 
-        // Sync team officers
-        $teamOfficers = collect($data['team_officers'] ?? [])
+        // Sync team officers and detect newly added members
+        $newTeamIds   = collect($data['team_officers'] ?? [])
             ->filter(fn($id) => $id != $data['main_officer_id'])
+            ->values()->toArray();
+
+        $teamOfficers = collect($newTeamIds)
             ->mapWithKeys(fn($id) => [$id => ['role' => 'team']])
             ->toArray();
 
@@ -178,6 +189,15 @@ class LegalCaseController extends Controller
             $teamOfficers[$data['main_officer_id']] = ['role' => 'main'];
         }
         $case->officers()->sync($teamOfficers);
+
+        // Email newly assigned main officer
+        if ($data['main_officer_id'] && $data['main_officer_id'] != $prevMainOfficerId) {
+            $this->sendAssignmentEmail($data['main_officer_id'], $case, 'main');
+        }
+        // Email newly added team members
+        foreach (array_diff($newTeamIds, $prevTeamIds) as $newId) {
+            $this->sendAssignmentEmail($newId, $case, 'team');
+        }
 
         return redirect()->route('admin.cases.show', $case)
             ->with('success', 'Case updated successfully.');
@@ -234,18 +254,64 @@ class LegalCaseController extends Controller
             'closed_date'     => now()->toDateString(),
         ]);
 
+        // Notify all officers assigned to this case
+        $case->load('officers');
+        $notified = collect();
+        if ($case->main_officer_id) {
+            $notified->push($case->main_officer_id);
+            $this->sendClosedEmail($case->main_officer_id, $case);
+        }
+        foreach ($case->officers as $officer) {
+            if (!$notified->contains($officer->id)) {
+                $this->sendClosedEmail($officer->id, $case);
+            }
+        }
+
         return back()->with('success', 'Case closed and outcome recorded.');
     }
 
     public function reopen(LegalCase $case)
     {
         $case->update([
-            'status'     => 'ongoing',
-            'stage'      => 'trial',
-            'score'      => null,
-            'closed_date'=> null,
+            'status'      => 'ongoing',
+            'stage'       => 'trial',
+            'score'       => null,
+            'closed_date' => null,
         ]);
 
+        // Notify main officer the case has been reopened
+        if ($case->main_officer_id) {
+            $this->sendAssignmentEmail($case->main_officer_id, $case, 'main');
+        }
+
         return back()->with('success', 'Case reopened.');
+    }
+
+    // ── Email helpers ──────────────────────────────────────────
+
+    private function sendAssignmentEmail(int $officerId, LegalCase $case, string $role): void
+    {
+        $officer = User::find($officerId);
+        if (!$officer || !$officer->email) {
+            return;
+        }
+        try {
+            Mail::to($officer->email)->send(new CaseAssigned($officer, $case, $role));
+        } catch (\Exception $e) {
+            \Log::error("CaseAssigned email failed [{$case->case_number}] to {$officer->email}: " . $e->getMessage());
+        }
+    }
+
+    private function sendClosedEmail(int $officerId, LegalCase $case): void
+    {
+        $officer = User::find($officerId);
+        if (!$officer || !$officer->email) {
+            return;
+        }
+        try {
+            Mail::to($officer->email)->send(new CaseClosed($officer, $case));
+        } catch (\Exception $e) {
+            \Log::error("CaseClosed email failed [{$case->case_number}] to {$officer->email}: " . $e->getMessage());
+        }
     }
 }

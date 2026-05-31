@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeCredentials;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -36,6 +38,7 @@ class UserController extends Controller
             'avatar'    => 'nullable|image|max:10240',
         ]);
 
+        $plainPassword     = $data['password'];
         $data['password']  = Hash::make($data['password']);
         $data['is_active'] = $request->boolean('is_active', true);
         $data['is_admin']  = $data['role'] === 'admin';
@@ -46,8 +49,17 @@ class UserController extends Controller
 
         $user = User::create($data);
 
+        // Send welcome credentials email
+        try {
+            Mail::to($user->email)->send(new WelcomeCredentials($user, $plainPassword));
+            $emailNote = " Login credentials sent to {$user->email}.";
+        } catch (\Exception $e) {
+            \Log::error("Welcome email failed for {$user->email}: " . $e->getMessage());
+            $emailNote = ' (Email delivery failed — please share credentials manually.)';
+        }
+
         return redirect()->route('admin.users.index')
-            ->with('success', "User {$user->name} created.");
+            ->with('success', "User {$user->name} created.{$emailNote}");
     }
 
     public function show(User $user)

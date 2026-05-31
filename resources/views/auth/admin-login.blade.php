@@ -432,37 +432,9 @@
 
     <!-- TOP: Brand mark -->
     <div class="lp-top">
-      <div class="lp-logo">
-        {{-- Scales-of-justice badge --}}
-        <svg class="lp-logo-badge" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="52" height="52" rx="12" fill="url(#lbg)"/>
-          <defs>
-            <linearGradient id="lbg" x1="0" y1="0" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-              <stop offset="0%"   stop-color="#7A4E2D"/>
-              <stop offset="100%" stop-color="#3A2010"/>
-            </linearGradient>
-          </defs>
-          {{-- Pole --}}
-          <line x1="26" y1="8"  x2="26" y2="44" stroke="#D4AA70" stroke-width="1.8" stroke-linecap="round"/>
-          {{-- Beam --}}
-          <line x1="10" y1="16" x2="42" y2="16" stroke="#D4AA70" stroke-width="1.8" stroke-linecap="round"/>
-          {{-- Left chain + pan --}}
-          <line x1="12" y1="16" x2="12" y2="27" stroke="#C4956A" stroke-width="1.4" stroke-linecap="round"/>
-          <path d="M6 27 Q12 34 18 27" stroke="#C4956A" stroke-width="1.5" fill="rgba(196,149,106,.15)" stroke-linecap="round"/>
-          {{-- Right chain + pan (lower — justice weighs) --}}
-          <line x1="40" y1="16" x2="40" y2="24" stroke="#C4956A" stroke-width="1.4" stroke-linecap="round"/>
-          <path d="M34 24 Q40 31 46 24" stroke="#C4956A" stroke-width="1.5" fill="rgba(196,149,106,.15)" stroke-linecap="round"/>
-          {{-- Top finial --}}
-          <circle cx="26" cy="8" r="2.2" fill="#D4AA70"/>
-          {{-- Base --}}
-          <rect x="20" y="42" width="12" height="2.5" rx="1.25" fill="#D4AA70"/>
-        </svg>
-
-        <div class="lp-logo-words">
-          <span class="lp-logo-name">ONYX</span>
-          <span class="lp-logo-tag">Legal &nbsp;·&nbsp; Advocates &amp; Solicitors</span>
-        </div>
-      </div>
+      <img src="{{ asset('images/logo-horizontal.png') }}"
+           alt="ONYX Advocates"
+           style="height:52px;width:auto;filter:brightness(0) invert(1);display:block;">
     </div>
 
     <!-- MID: Headlines + features -->
@@ -474,7 +446,7 @@
       </h1>
 
       <p class="lp-desc">
-        Uganda's trusted legal practice management system — built for advocates who move fast and think clearly.
+        Uganda's premier advocates &mdash; case management, client records, documents, and finances. All in one place.
       </p>
 
       <div class="lp-feats">
