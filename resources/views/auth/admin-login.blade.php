@@ -432,9 +432,11 @@
 
     <!-- TOP: Brand mark -->
     <div class="lp-top">
-      <img src="{{ asset('images/logo-horizontal.png') }}"
-           alt="ONYX Advocates"
-           style="height:52px;width:auto;filter:brightness(0) invert(1);display:block;">
+      <div style="background:#fff;border-radius:10px;padding:8px 16px;display:inline-flex;align-items:center;">
+        <img src="{{ asset('images/logo-horizontal.png') }}"
+             alt="ONYX Advocates"
+             style="height:40px;width:auto;display:block;">
+      </div>
     </div>
 
     <!-- MID: Headlines + features -->

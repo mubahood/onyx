@@ -15,11 +15,13 @@
 
     {{-- ── HEADER ── --}}
     <tr>
-      <td style="background:linear-gradient(135deg,#1A0E07 0%,#3A2010 100%);border-radius:12px 12px 0 0;padding:24px 40px;">
-        <img src="{{ asset('images/logo-horizontal.png') }}"
-             alt="ONYX Advocates"
-             width="180"
-             style="height:auto;display:block;filter:brightness(0) invert(1);">
+      <td style="background:linear-gradient(135deg,#1A0E07 0%,#3A2010 100%);border-radius:12px 12px 0 0;padding:20px 32px;">
+        <div style="background:#ffffff;border-radius:8px;display:inline-block;padding:8px 16px;">
+          <img src="{{ asset('images/logo-horizontal.png') }}"
+               alt="ONYX Advocates"
+               width="160"
+               style="height:auto;display:block;">
+        </div>
       </td>
     </tr>
 
