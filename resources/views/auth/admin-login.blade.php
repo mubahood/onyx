@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In — ONYX Legal</title>
+  <title>Sign In — ONYX Advocates</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo-square.png') }}">
+  <link rel="apple-touch-icon" href="{{ asset('images/logo-square.png') }}">
+  <link rel="shortcut icon" href="{{ asset('images/logo-square.png') }}">
   <link rel="stylesheet" href="{{ asset('vendor/fa/css/all.min.css') }}">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

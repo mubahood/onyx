@@ -5,7 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>@yield('title', 'Dashboard') — ONYX Legal</title>
+  <title>@yield('title', 'Dashboard') — ONYX Advocates</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo-square.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logo-square.png') }}">
+  <link rel="apple-touch-icon" href="{{ asset('images/logo-square.png') }}">
+  <link rel="shortcut icon" href="{{ asset('images/logo-square.png') }}">
 
   {{-- All CSS served locally — zero CDN blocking requests --}}
   <link rel="stylesheet" href="{{ asset('vendor/fa/css/all.min.css') }}">
